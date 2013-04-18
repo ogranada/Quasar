@@ -13,7 +13,8 @@ class Core(object):
         if not hasattr(cls, '_instance'):
             orig = super(Core, cls)
             cls._instance = orig.__new__(cls, *args, **kwargs)
-            cls._instance.plugins = {}
+            cls._instance.importadores = {}
+            cls._instance.importadores_invalidos = {}
         return cls._instance
     
     #def __init__(self, *args, **kwargs):
