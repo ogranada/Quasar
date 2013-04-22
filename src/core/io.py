@@ -1,8 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os
-import sys
+import os, sys, traceback
 
 global LOG
 
@@ -39,7 +38,7 @@ def write(*args, **kwargs):
     out=sys.stdout
     for arg in args:
         for color in colores:
-            arg = arg.replace(color,colores[color])
+            arg = str(arg).replace(color,colores[color])
         print >> out,arg,
     for kw in kwargs.keys():
         val = kwargs[kw]
@@ -54,7 +53,7 @@ def log(*args, **kwargs):
         out=sys.stdout
         for arg in args:
             for color in colores:
-                arg = arg.replace(color,colores[color])
+                arg = str(arg).replace(color,colores[color])
             print >> out,arg,
         for kw in kwargs.keys():
             val = kwargs[kw]
@@ -66,18 +65,24 @@ def log(*args, **kwargs):
 
 def error(*args, **kwargs):
     out=sys.stderr
+    print >> out, colores["<ro>"]
+    #### print stacktrace ####
+    if(kwargs.get("traceback",False)):
+        stack = traceback.format_stack()
+        stack = stack[0:-2]
+        traceback.print_exc()
+    ##########################
     for arg in args:
         for color in colores:
-            arg = arg.replace(color,colores[color])
+            arg = str(arg).replace(color,colores[color])
         print >> out,arg,
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = val.replace(color,colores[color])
         print >> out,kw,":",val,
+    print >> out, colores["</ro>"]
     print >> out,""
-
-
 
 
 

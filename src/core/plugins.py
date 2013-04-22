@@ -4,7 +4,6 @@
 import os,sys
 import zipimport as zi
 import io
-from utils import Nodo
 
 
 
@@ -31,9 +30,17 @@ class PluginManager(object):
 
     def __init__(self, core, filepath):
         self.__core = core
+        dir_plugins= []
+        sys.path.append(filepath)
         plugins = os.listdir(filepath)
         for pluginName in plugins:
-            TYPE = open(filepath+os.sep+pluginName).read(10)
+            if os.path.isdir(filepath+os.sep+pluginName):
+                TYPE = "DIR"
+            else:
+                try:
+                    TYPE = open(filepath+os.sep+pluginName).read(10)
+                except IOError as err:
+                    TYPE = "UNDEFINED"
             if 'PK' in TYPE:
                 importador = zi.zipimporter(filepath+os.sep+pluginName)
                 init = importador.load_module('__init__')
@@ -42,13 +49,16 @@ class PluginManager(object):
                     core.importadores[ init.contrato['nombre'] ] = importador
                 else:
                     io.log(init.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
+            elif TYPE=='DIR':
+                dir_plugins.append( pluginName )
             else:
-                io.log(pluginName,"isn't a plugin")
+                io.log("<ro>'%s'"%pluginName,"no es un componente valido</ro>")
+        ###################################################################################
         for importador in core.importadores:
             modulo = self.modulo(importador)
             resp = self.cumple_dependencias(modulo,core.importadores)
             if resp[0]:
-                io.log(init.contrato['nombre'],'cargado')
+                io.log('<ve>cargado</ve>',init.contrato['nombre'])
             else:
                 io.log("dependencias incumplidas para","%s,"%init.contrato['nombre'],"<am>falta",'%s</am>'%resp[1])
                 core.importadores_invalidos[init.contrato['nombre']] = core.importadores[ init.contrato['nombre'] ]
@@ -70,10 +80,22 @@ class PluginManager(object):
             inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
             inst.orden = mod.contrato["prioridad"]
             instancias.append( inst )
+        ###################################################################################
+        print "load modules"
+        for plugin in dir_plugins:
+            mod = __import__(plugin)
+            ctc = self.cumple_terminos_contractuales(mod)
+            if ctc==True:
+                core.importadores[ init.contrato['nombre'] ] = importador
+            else:
+                io.log(init.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
+            inst = self.instancia(mod)
+            inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
+            inst.orden = mod.contrato["prioridad"]
+            instancias.append( inst )
         #####################################
         instancias.reverse()
         for instancia in instancias:
-            print instancia
             instancia.al_finalizar_carga(core,instancia)
             
         

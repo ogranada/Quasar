@@ -39,8 +39,8 @@ class ConfigFile(object):
     def __init__(self,name):
         try:
             self.name = name
-            self.config.readfp(open(paths.get_base()+name))
-            io.log('cargado',paths.get_base()+name)
+            self.config.readfp(open(name))
+            io.log('<ve>cargado</ve>',paths.get_base()+name)
         except Exception as error:
             io.error(error)
         
