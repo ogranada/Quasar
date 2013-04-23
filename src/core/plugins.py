@@ -5,7 +5,7 @@ import os,sys
 import zipimport as zi
 import io
 
-
+io.LOG = True
 
 '''
 Contrato:
@@ -33,6 +33,7 @@ class PluginManager(object):
         dir_plugins= []
         sys.path.append(filepath)
         plugins = os.listdir(filepath)
+        core.instancia = self.instancia
         for pluginName in plugins:
             if os.path.isdir(filepath+os.sep+pluginName):
                 TYPE = "DIR"
@@ -82,13 +83,19 @@ class PluginManager(object):
             instancias.append( inst )
         ###################################################################################
         print "load modules"
+        dir_plugins_mods = []
         for plugin in dir_plugins:
             mod = __import__(plugin)
+            dir_plugins_mods.append(mod)
+            
+        dir_plugins_mods = sorted(dir_plugins_mods, key=lambda mod: mod.contrato['prioridad'])
+            
+        for mod in dir_plugins_mods:
             ctc = self.cumple_terminos_contractuales(mod)
             if ctc==True:
-                core.importadores[ init.contrato['nombre'] ] = importador
+                core.importadores[ mod.contrato['nombre'] ] = mod
             else:
-                io.log(init.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
+                io.log(mod.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
             inst = self.instancia(mod)
             inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
             inst.orden = mod.contrato["prioridad"]
@@ -98,14 +105,21 @@ class PluginManager(object):
         for instancia in instancias:
             instancia.al_finalizar_carga(core,instancia)
             
-        
-            
     def modulo(self, importador):
         mod = self.__core.importadores[importador].load_module('__init__')
         return mod
             
-    def instancia(self, modulo):
-        return modulo.init(self.__core)
+    def instancia(self, modulo=None):
+        if modulo==None:
+            return None
+        elif type(modulo)==type(""):
+            try:
+                inst = self.modulo(modulo).init(self.__core)
+            except:
+                inst = self.__core.importadores[modulo].init(self.__core)
+            return inst
+        else:
+            return modulo.init(self.__core)
                 
     def cumple_terminos_contractuales(self,init):
         for termino in self.__llaves_de_contrato:

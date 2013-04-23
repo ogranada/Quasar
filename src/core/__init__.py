@@ -24,6 +24,7 @@ class Core(object):
             cls._instance.importadores = {}
             cls._instance.importadores_invalidos = {}
             cls._instance.objetos = {}
+            cls._instance.dir_mods = {}
         return cls._instance
     
     def __init__(self, *args, **kwargs):

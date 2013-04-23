@@ -1,55 +1,63 @@
 
 from PySide import QtCore, QtGui
 
+import os
 
-class TabManager(QtGui.QWidget):
+class Editor(QtGui.QTextEdit):
     
-    def __init__(self,*args,**kwargs):
-        QtGui.QWidget.__init__(self,*args,**kwargs)
-        self.tabs = []
-        self.create_tab_widget()
-        self.addTab()
-        
-    def create_tab_widget(self):
-        self.gridLayout = QtGui.QGridLayout(self)
-        self.gridLayout.setObjectName("gridLayout")
-        self.tabWidget = QtGui.QTabWidget(self)
-        self.tabWidget.setObjectName("tabWidget")
-        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
-        
-    def addTab(self):
-        tab = QtGui.QWidget()
-        tab.setObjectName("tab"+str(len(self.tabs)))
-        gridLayout = QtGui.QGridLayout(tab)
-        textEdit = QtGui.QTextEdit(tab)
-        gridLayout.addWidget(textEdit, 0, 0, 1, 1)
-        self.tabs.append(tab)
-        self.tabWidget.addTab(tab, "Nuevo")
-        return tab
+    def __init__(self,core,*args,**kwargs):
+        QtGui.QTextEdit.__init__(self,*args,**kwargs)
+        self.core = core
+        self.setupEditor()
+        self.filename = None
         
         
-    def embed(self,ventana):            
-        ventana.makeMenu("archivo")
-        ventana.makeAction("nuevo_modulo", label=u"&Nuevo Modulo", shortcut="Ctrl+N", menuname="archivo",separator=0)
-        ventana.menuBind("archivo","nuevo_modulo",self.addTab)
-        ventana.setCentralWidget(self)
+    def setupEditor(self):
+        font = QtGui.QFont()
+        font.setFamily('Courier')
+        font.setFixedPitch(True)
+        font.setPointSize(12)
+        self.setFont(font)
+        # self.highlighter = Highlighter(self.document())
+        self.highlighterCreator = self.core.instancia("resaltador")
+        self.highlighter = self.highlighterCreator.getHighlighter( self.document() )
+        
+    def save(self):
+        if not self.filename:
+            filename = QtGui.QFileDialog.getSaveFileName(self, 'Guardar Archivo', '.')
+            filename = filename[0]
+            self.filepath = filename
+            self.filename = filename.split(os.sep)[-1]
+        else:
+            filename = self.filepath
+        if filename:
+            fname = open(filename, 'w')
+            fname.write(self.toPlainText())
+            fname.close() 
+            
+    def open(self):
+        filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
+        filename = filename[0]
+        self.filepath = filename
+        self.setText(open(self.filepath,'r').read())
+        self.filename = filename.split(os.sep)[-1]
         
 
 def init(core):
-    return TabManager()
+    return Editor(core)
     
 
 def alFinalizar(core, instancia):
-    instancia.embed(core.objetos['Ventana'])
+    pass
 
 
 contrato = {
-    'nombre':'Editor',
-    'dependencias':['guiStarter','Ventana'],
+    'nombre':'editor',
+    'dependencias':['guiStarter','Ventana','resaltador'],
     'librerias':['PySide'],
     'inicio':init,
     'al_finalizar_carga':alFinalizar,
-    'prioridad':2,
+    'prioridad':1.5,
 }
 
 
