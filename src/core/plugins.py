@@ -119,7 +119,7 @@ class PluginManager(object):
                 inst = self.__core.importadores[modulo].init(self.__core)
             return inst
         else:
-            return modulo.init(self.__core)
+            return modulo.contrato['inicio'](self.__core)
                 
     def cumple_terminos_contractuales(self,init):
         for termino in self.__llaves_de_contrato:
