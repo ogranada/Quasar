@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 import os, sys, traceback
-
+import platform
 global LOG
 
 
@@ -26,6 +26,18 @@ colores = {
 }
 
 
+
+
+def putColors(val):
+	if platform.system().lower()=="windows":
+		for color in colores:
+			val = val.replace(color,"")
+	else:
+		for color in colores:
+			val = val.replace(color,colores[color])
+	return val
+
+
 def set_log(log):
     global LOG
     LOG = log
@@ -38,27 +50,27 @@ def write(*args, **kwargs):
     out=sys.stdout
     for arg in args:
         for color in colores:
-            arg = str(arg).replace(color,colores[color])
+            arg = putColors(str(arg))
         print >> out,arg,
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
-            val = val.replace(color,colores[color])
+            val = putColors(val)
         print >> out,kw,":",val,
     print >> out,""
-
-
+	
+	
 def log(*args, **kwargs):
     if LOG:
         out=sys.stdout
         for arg in args:
             for color in colores:
-                arg = str(arg).replace(color,colores[color])
+                arg = putColors(str(arg))
             print >> out,arg,
         for kw in kwargs.keys():
             val = kwargs[kw]
             for color in colores:
-                val = val.replace(color,colores[color])
+                val = putColors(val)
             print >> out,kw,":",val,
         print >> out,""
 
@@ -74,12 +86,12 @@ def error(*args, **kwargs):
     ##########################
     for arg in args:
         for color in colores:
-            arg = str(arg).replace(color,colores[color])
+            arg = putColors(str(arg))
         print >> out,arg,
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
-            val = val.replace(color,colores[color])
+            val = putColors(val)
         print >> out,kw,":",val,
     print >> out, colores["</ro>"]
     print >> out,""
