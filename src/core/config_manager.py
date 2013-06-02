@@ -39,8 +39,13 @@ class ConfigFile(object):
     def __init__(self,name):
         try:
             self.name = name
+            if not os.path.exists(name):
+                from datetime import datetime
+                f = open(name,'w')
+                f.write( "# %s/%s/%s"%datetime.isocalendar(datetime.now()) )
+                f.close()
             self.config.readfp(open(name))
-            io.log('<ve>cargado</ve>',paths.get_base()+name)
+            io.log('<ve>cargado</ve>', name.split( os.sep )[-1] )
         except Exception as error:
             io.error(error)
         

@@ -5,8 +5,9 @@ import os,sys,user
 
 from core import config_manager
 from core import memory as mem
-from core import io
 from core import plugins
+from core import paths
+from core import io
 from core.decorators import *
 
 
@@ -28,10 +29,9 @@ class Core(object):
         return cls._instance
     
     def __init__(self, *args, **kwargs):
-        config_file = kwargs.get("config_file", os.sep.join([user.home,".quasar","config.cfg"]) )
-        plugins_path = kwargs.get("plugins_path", os.sep.join([user.home,".quasar","plugins"]) )
+        config_file = kwargs.get("config_file", paths.store_from_base( "config.cfg" ) )
         self.config_manager = config_manager.ConfigFile(config_file)
-        self.plugin_manager = plugins.PluginManager(self,plugins_path)
+        self.plugin_manager = plugins.PluginManager(self,paths.get_path(self.config_manager['PLUGINS']["path"]))
 
 
 

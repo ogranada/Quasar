@@ -97,9 +97,14 @@ class PluginManager(object):
             else:
                 io.log(mod.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
             inst = self.instancia(mod)
-            inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
-            inst.orden = mod.contrato["prioridad"]
-            instancias.append( inst )
+            try:
+                inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
+                inst.orden = mod.contrato["prioridad"]
+                instancias.append( inst )
+            except AttributeError as ae:
+                io.w( "objeto %s del plugin %s no puede puede ser usado."%(str(inst), mod.contrato['nombre']) )
+            except Exception as w:
+                raise w
         #####################################
         instancias.reverse()
         for instancia in instancias:

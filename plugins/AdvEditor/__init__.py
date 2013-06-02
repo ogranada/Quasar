@@ -13,15 +13,24 @@ class Editor(GenericEditor):
         self.filename = None
         
         self.actionMoveline = QtGui.QAction(self)
+        self.actionMoveline.setText("Move Line Down")
         self.actionMoveline.setShortcut("Ctrl+Shift+Down")
         QtCore.QObject.connect(self.actionMoveline, QtCore.SIGNAL("triggered()"), self.TextEditEvent)
+        #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent)
         
         self.actionMoveline2 = QtGui.QAction(self)
+        self.actionMoveline.setText("Move Line Down")
         self.actionMoveline2.setShortcut("Ctrl+Shift+Up")
-        QtCore.QObject.connect(self.actionMoveline2, QtCore.SIGNAL("triggered()"), self.TextEditEvent2)
+        QtCore.QObject.connect(self.actionMoveline2, QtCore.SIGNAL("triggered()"), self.TextEditEvent2)        
+        #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent2)
         
         self.codeEdit.addAction(self.actionMoveline)
         self.codeEdit.addAction(self.actionMoveline2)
+        
+        
+        self.codeEdit.contextMenu.removeAction( self.actionMoveline )
+        self.codeEdit.contextMenu.removeAction( self.actionMoveline2 )
+        
         
     def TextEditEvent(self):
         cursor = self.codeEdit.textCursor()                 # obtiene el cursor
@@ -49,7 +58,12 @@ class Editor(GenericEditor):
         cursor.movePosition(QtGui.QTextCursor.Up)  # se mueve a la linea de arriba
         cursor.endEditBlock()                               # termina edicion
         self.codeEdit.setTextCursor(cursor)                 # establece el cursor
-        
+
+    def __del__(self):
+        try:
+            del(self.codeEdit)
+        except:
+            pass
         
     def save(self):
         if not self.filename:
@@ -65,9 +79,13 @@ class Editor(GenericEditor):
     def open(self):
         filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         filename = filename[0]
-        self.filepath = filename
-        openFileInEditor(self, filename)
-        self.filename = filename.split(os.sep)[-1]
+        if filename:
+            self.filepath = filename
+            openFileInEditor(self, filename)
+            self.filename = filename.split(os.sep)[-1]
+            return True
+        else:
+            return False
         
 
 def init(core):

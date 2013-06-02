@@ -83,8 +83,32 @@ def error(*args, **kwargs):
         print >> out,kw,":",val,
     print >> out, colores["</ro>"]
     print >> out,""
+    
+e = error
+    
 
+def warning(*args, **kwargs):
+    out=sys.stderr
+    print >> out, colores["<am>"]
+    #### print stacktrace ####
+    if(kwargs.get("traceback",False)):
+        stack = traceback.format_stack()
+        stack = stack[0:-2]
+        traceback.print_exc()
+    ##########################
+    for arg in args:
+        for color in colores:
+            arg = str(arg).replace(color,colores[color])
+        print >> out,arg,
+    for kw in kwargs.keys():
+        val = kwargs[kw]
+        for color in colores:
+            val = val.replace(color,colores[color])
+        print >> out,kw,":",val,
+    print >> out, colores["</am>"]
+    print >> out,""
 
+w = warning
 
 
 set_log(False)
