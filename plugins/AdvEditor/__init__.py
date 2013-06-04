@@ -5,6 +5,8 @@ from pcef.editors.generic import GenericEditor
 from pcef import openFileInEditor
 from pcef import saveFileFromEditor
 
+from core import io
+
 class Editor(GenericEditor):
     
     def __init__(self,core,*args,**kwargs):
@@ -30,6 +32,18 @@ class Editor(GenericEditor):
         
         self.codeEdit.contextMenu.removeAction( self.actionMoveline )
         self.codeEdit.contextMenu.removeAction( self.actionMoveline2 )
+
+
+        def hola(*a):
+            print "->",a
+        self.actionCur = QtGui.QAction(self)
+        self.actionCur.setText("Cursor Event")
+        self.actionMoveline2.setShortcut("Ctrl+LeftClick")
+        QtCore.QObject.connect(self.actionCur, QtCore.SIGNAL("triggered()"), hola)
+        #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent)
+        self.codeEdit.addAction(self.actionCur)
+        
+
         
         
     def TextEditEvent(self):

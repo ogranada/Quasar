@@ -35,6 +35,8 @@ class PluginManager(object):
         plugins = os.listdir(filepath)
         core.instancia = self.instancia
         for pluginName in plugins:
+            if pluginName[0:3].lower()=="dis":
+                continue
             if os.path.isdir(filepath+os.sep+pluginName):
                 TYPE = "DIR"
             else:
@@ -44,12 +46,15 @@ class PluginManager(object):
                     TYPE = "UNDEFINED"
             if 'PK' in TYPE:
                 importador = zi.zipimporter(filepath+os.sep+pluginName)
-                init = importador.load_module('__init__')
-                ctc = self.cumple_terminos_contractuales(init)
-                if ctc==True:
-                    core.importadores[ init.contrato['nombre'] ] = importador
-                else:
-                    io.log(init.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
+                try:
+                    init = importador.load_module('__init__')
+                    ctc = self.cumple_terminos_contractuales(init)
+                    if ctc==True:
+                        core.importadores[ init.contrato['nombre'] ] = importador
+                    else:
+                        io.log(init.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
+                except Exception as ex1:
+                    io.e("Error %s al importar %s"%(str(ex1),pluginName),)
             elif TYPE=='DIR':
                 dir_plugins.append( pluginName )
             else:
