@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import os,sys,user
+import os,sys
 
 from core import config_manager
 from core import memory as mem
@@ -10,6 +10,7 @@ from core import paths
 from core import io
 from core.decorators import *
 
+# os.path.expanduser("~")
 
 
 class Core(object):

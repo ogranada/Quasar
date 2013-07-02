@@ -59,7 +59,7 @@ class TabManager(QtGui.QWidget):
         # print dir(self.tabWidget)
         #for i in [x for x in dir( self.tabWidget.widget(index).editor ) if 'close' in x.lower() ]:
         #    print i
-        print self.tabWidget.removeTab(index)
+        self.tabWidget.removeTab(index)
         
     def create_tab_widget(self):
         self.gridLayout = QtGui.QGridLayout(self)

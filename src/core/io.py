@@ -27,6 +27,18 @@ colores = {
 
 
 
+if sys.version_info >= (3, 0):
+    Print = print
+else:
+    def Print(*argss,sep='',end='\n',file=sys.stdout,**kwarg):
+        for i in args:
+            file.write(i)
+            file.write(sep)
+        for k in kwargs.keys():
+            file.write("{0}:{1}".format(k,kwargs[k]))        
+            file.write(sep)        
+        file.write(end)
+
 
 def putColors(val):
 	if platform.system().lower()=="windows":
@@ -51,13 +63,13 @@ def write(*args, **kwargs):
     for arg in args:
         for color in colores:
             arg = putColors(str(arg))
-        print >> out,arg,
+        Print(arg , end="",file=out)
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = putColors(val)
-        print >> out,kw,":",val,
-    print >> out,""
+        Print(kw,":",val , end="",file=out)
+    Print("",file=out)
 	
 	
 def log(*args, **kwargs):
@@ -66,59 +78,59 @@ def log(*args, **kwargs):
         for arg in args:
             for color in colores:
                 arg = putColors(str(arg))
-            print >> out,arg,
+            Print(arg , end="",file=out)
         for kw in kwargs.keys():
             val = kwargs[kw]
             for color in colores:
                 val = putColors(val)
-            print >> out,kw,":",val,
-        print >> out,""
+            Print(kw,":",val , end="",file=out)
+        Print("",file=out)
 
 
 def error(*args, **kwargs):
     out=sys.stderr
-    print >> out, colores["<ro>"]
-    #### print stacktrace ####
+    Print(colores["<ro>"],file=out)
+    #### Print stacktrace ####
     if(kwargs.get("traceback",False)):
         stack = traceback.format_stack()
         stack = stack[0:-2]
-        traceback.print_exc()
+        traceback.Print_exc()
     ##########################
     for arg in args:
         for color in colores:
             arg = putColors(str(arg))
-        print >> out,arg,
+        Print(arg, end="",file=out)
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = putColors(val)
-        print >> out,kw,":",val,
-    print >> out, colores["</ro>"]
-    print >> out,""
+        Print(kw,":",val, end="",file=out)
+    Print(colores["</ro>"],file=out)
+    Print("",file=out)
     
 e = error
     
 
 def warning(*args, **kwargs):
     out=sys.stderr
-    print >> out, colores["<am>"]
-    #### print stacktrace ####
+    Print(colores["<am>"],file=out)
+    #### Print stacktrace ####
     if(kwargs.get("traceback",False)):
         stack = traceback.format_stack()
         stack = stack[0:-2]
-        traceback.print_exc()
+        traceback.Print_exc()
     ##########################
     for arg in args:
         for color in colores:
             arg = str(arg).replace(color,colores[color])
-        print >> out,arg,
+        Print(arg, end="",file=out)
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = val.replace(color,colores[color])
-        print >> out,kw,":",val,
-    print >> out, colores["</am>"]
-    print >> out,""
+        Print(kw,":",val, end="",file=out)
+    Print(colores["</am>"],file=out)
+    Print("",file=out)
 
 w = warning
 

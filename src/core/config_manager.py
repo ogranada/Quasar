@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-import ConfigParser
+try:
+    import ConfigParser
+except ImportError as err:
+    import configparser as ConfigParser
 import os
-import io
 import sys
-import paths
+import core.io as io
+import core.paths as paths
 
 
 class Map(object):
@@ -15,7 +18,7 @@ class Map(object):
     
     def __getitem__(self, key):
         '''Sobrecarga del operador [] para obtener el dato de una posición dada.'''
-        if self.data.has_key(key):            
+        if key in self.data:            
             return self.data[key]
         else:
             return None
@@ -32,7 +35,7 @@ class ConfigFile(object):
 
     def __new__(cls,*args,**kwargs):
         orig = super(ConfigFile, cls)
-        cls._instance = orig.__new__(cls, *args, **kwargs)
+        cls._instance = orig.__new__(cls)
         cls._instance.config = ConfigParser.ConfigParser()
         return cls._instance
         

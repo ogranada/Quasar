@@ -1,8 +1,9 @@
 
+from core import io
 
 class X:
     def __init__(self):
-        print "hola"
+        io.write("hola")
 
 
 
@@ -10,7 +11,7 @@ def a(*args):
     return X()
     
 def b(*args):
-    print "adios"
+    io.write("adios")
 
 
 contrato = {

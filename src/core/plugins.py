@@ -3,7 +3,7 @@
 
 import os,sys
 import zipimport as zi
-import io
+import core.io as io
 
 io.LOG = True
 
@@ -41,7 +41,8 @@ class PluginManager(object):
                 TYPE = "DIR"
             else:
                 try:
-                    TYPE = open(filepath+os.sep+pluginName).read(10)
+                    TYPE = open(filepath+os.sep+pluginName,mode='rb')
+                    TYPE = str(TYPE.read(10))
                 except IOError as err:
                     TYPE = "UNDEFINED"
             if 'PK' in TYPE:
@@ -87,13 +88,21 @@ class PluginManager(object):
             inst.orden = mod.contrato["prioridad"]
             instancias.append( inst )
         ###################################################################################
-        print "load modules"
+        io.write("load modules")
         dir_plugins_mods = []
         for plugin in dir_plugins:
             mod = __import__(plugin)
             dir_plugins_mods.append(mod)
             
-        dir_plugins_mods = sorted(dir_plugins_mods, key=lambda mod: mod.contrato['prioridad'])
+        #io.write(dir(mod))
+        #fpri = lambda md: md.contrato['prioridad']
+        def fpri(mod):
+            if hasattr(mod, "contrato"):
+                return mod.contrato['prioridad']
+            else:
+                print("=======>",mod)
+                return 100
+        dir_plugins_mods = sorted(dir_plugins_mods, key=fpri)
             
         for mod in dir_plugins_mods:
             ctc = self.cumple_terminos_contractuales(mod)
@@ -133,7 +142,7 @@ class PluginManager(object):
                 
     def cumple_terminos_contractuales(self,init):
         for termino in self.__llaves_de_contrato:
-            if not init.contrato.has_key(termino):
+            if termino not in init.contrato:
                 return termino
         return True
         

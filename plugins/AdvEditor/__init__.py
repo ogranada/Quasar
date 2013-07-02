@@ -35,7 +35,7 @@ class Editor(GenericEditor):
 
 
         def hola(*a):
-            print "->",a
+            io.write(a)
         self.actionCur = QtGui.QAction(self)
         self.actionCur.setText("Cursor Event")
         self.actionMoveline2.setShortcut("Ctrl+LeftClick")
