@@ -1,9 +1,12 @@
 
 from PySide import QtCore, QtGui
 import os
-from pcef.editors.generic import GenericEditor
-from pcef import openFileInEditor
-from pcef import saveFileFromEditor
+try:
+    from pcef.editors.generic import GenericEditor # old pcef
+    from pcef import openFileInEditor
+    from pcef import saveFileFromEditor
+except:
+    from pcef.core import QGenericCodeEdit as GenericEditor
 
 from core import io
 
@@ -26,23 +29,38 @@ class Editor(GenericEditor):
         QtCore.QObject.connect(self.actionMoveline2, QtCore.SIGNAL("triggered()"), self.TextEditEvent2)        
         #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent2)
         
-        self.codeEdit.addAction(self.actionMoveline)
-        self.codeEdit.addAction(self.actionMoveline2)
-        
-        
-        self.codeEdit.contextMenu.removeAction( self.actionMoveline )
-        self.codeEdit.contextMenu.removeAction( self.actionMoveline2 )
+        try:
+            self.codeEdit.addAction(self.actionMoveline)
+            self.codeEdit.addAction(self.actionMoveline2)
+            
+            
+            self.codeEdit.contextMenu.removeAction( self.actionMoveline )
+            self.codeEdit.contextMenu.removeAction( self.actionMoveline2 )
+            def hola(*a):
+                io.write(a)
+            self.actionCur = QtGui.QAction(self)
+            self.actionCur.setText("Cursor Event")
+            self.actionMoveline2.setShortcut("Ctrl+LeftClick")
+            QtCore.QObject.connect(self.actionCur, QtCore.SIGNAL("triggered()"), hola)
+            #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent)
+            self.codeEdit.addAction(self.actionCur)
+        except:
+            self.codeEdit = self
+            self.addAction(self.actionMoveline)
+            self.addAction(self.actionMoveline2)
+            
+            
+            self.contextMenu.removeAction( self.actionMoveline )
+            self.contextMenu.removeAction( self.actionMoveline2 )
+            def hola(*a):
+                io.write(a)
+            self.actionCur = QtGui.QAction(self)
+            self.actionCur.setText("Cursor Event")
+            self.actionMoveline2.setShortcut("Ctrl+LeftClick")
+            QtCore.QObject.connect(self.actionCur, QtCore.SIGNAL("triggered()"), hola)
+            #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent)
+            self.addAction(self.actionCur)
 
-
-        def hola(*a):
-            io.write(a)
-        self.actionCur = QtGui.QAction(self)
-        self.actionCur.setText("Cursor Event")
-        self.actionMoveline2.setShortcut("Ctrl+LeftClick")
-        QtCore.QObject.connect(self.actionCur, QtCore.SIGNAL("triggered()"), hola)
-        #QtGui.QShortcut("Ctrl+Shift+Down",self,self.TextEditEvent)
-        self.codeEdit.addAction(self.actionCur)
-        
 
         
         
@@ -88,14 +106,20 @@ class Editor(GenericEditor):
         else:
             filename = self.filepath
         if filename:
-            saveFileFromEditor(self, filename)
+            try:
+                saveFileFromEditor(self, filename)
+            except:
+                self.saveFile(filename)
             
     def open(self):
         filename = QtGui.QFileDialog.getOpenFileName(self, 'Open File', '.')
         filename = filename[0]
         if filename:
             self.filepath = filename
-            openFileInEditor(self, filename)
+            try:
+                openFileInEditor(self, filename)
+            except:
+                self.openFile(filename)
             self.filename = filename.split(os.sep)[-1]
             return True
         else:

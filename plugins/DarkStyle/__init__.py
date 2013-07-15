@@ -57,7 +57,7 @@ def a(core):
 def b(core,instance):
     ventana = core.objetos['Ventana']
     ventana.makeMenu("ventana")
-    ventana.makeAction("estilo", label=u"&Estilo", shortcut="Ctrl+Y", menuname="ventana",separator=0)
+    ventana.makeAction("estilo", label="&Estilo", shortcut="Ctrl+Y", menuname="ventana",separator=0)
     ventana.menuBind("ventana","estilo",instance.select)
 
 

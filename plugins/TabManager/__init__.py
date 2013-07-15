@@ -34,7 +34,7 @@ class TabManager(QtGui.QWidget):
         if index < self.tabWidget.count()-1:
             widget = self.tabWidget.widget(index)
             self.tabWidget.removeTab(index)
-            self.tabWidget.insertTab(index+1,widget,u"")
+            self.tabWidget.insertTab(index+1,widget,"")
             self.tabWidget.setCurrentIndex(index+1)
             index = self.tabWidget.currentIndex()
             self.tabWidget.setTabText(index, self.tabWidget.currentWidget().editor.filename)
@@ -44,7 +44,7 @@ class TabManager(QtGui.QWidget):
         if index > 0:
             widget = self.tabWidget.widget(index)
             self.tabWidget.removeTab(index)
-            self.tabWidget.insertTab(index-1,widget,u"")
+            self.tabWidget.insertTab(index-1,widget,"")
             self.tabWidget.setCurrentIndex(index-1)
             index = self.tabWidget.currentIndex()
             self.tabWidget.setTabText(index, self.tabWidget.currentWidget().editor.filename)
@@ -110,11 +110,11 @@ class TabManager(QtGui.QWidget):
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
         [io.write(x) for x in dir(self.gridLayout) if 'setContent' in x]
         ventana.makeMenu("archivo")
-        ventana.makeAction("nuevo_modulo", label=u"&Nuevo Modulo", shortcut="Ctrl+N", menuname="archivo",separator=0)
+        ventana.makeAction("nuevo_modulo", label="&Nuevo Modulo", shortcut="Ctrl+N", menuname="archivo",separator=0)
         ventana.menuBind("archivo","nuevo_modulo",self.addTab)
-        ventana.makeAction("guardar", label=u"&Guardar", shortcut="Ctrl+S", menuname="archivo",separator=0)
+        ventana.makeAction("guardar", label="&Guardar", shortcut="Ctrl+S", menuname="archivo",separator=0)
         ventana.menuBind("archivo","guardar",self.save)
-        ventana.makeAction("abrir", label=u"&Abrir", shortcut="Ctrl+O", menuname="archivo",separator=0)
+        ventana.makeAction("abrir", label="&Abrir", shortcut="Ctrl+O", menuname="archivo",separator=0)
         ventana.menuBind("archivo","abrir",self.openFile)
         ventana.setCentralWidget(self)
         

@@ -25,12 +25,19 @@ colores = {
     "</bl>":'\033[0m',
 }
 
-
-
 if sys.version_info >= (3, 0):
-    Print = print
+    Print = getattr(__builtins__,"get")("print")
 else:
-    def Print(*argss,sep='',end='\n',file=sys.stdout,**kwarg):
+    def Print(*args, **kwargs):
+        sep=" " if "sep" not in kwargs else kwargs["sep"]
+        end="\n" if "end" not in kwargs else kwargs["end"]
+        file=sys.stdout if "file" not in kwargs else kwargs["file"]
+        if "sep" in kwargs:
+            kwargs.pop("sep")
+        if "end" in kwargs:
+            kwargs.pop("end")
+        if "file" in kwargs:
+            kwargs.pop("file")
         for i in args:
             file.write(i)
             file.write(sep)
@@ -41,13 +48,13 @@ else:
 
 
 def putColors(val):
-	if platform.system().lower()=="windows":
-		for color in colores:
-			val = val.replace(color,"")
-	else:
-		for color in colores:
-			val = val.replace(color,colores[color])
-	return val
+    if platform.system().lower()=="windows":
+        for color in colores:
+            val = val.replace(color,"")
+    else:
+        for color in colores:
+            val = val.replace(color,colores[color])
+    return val
 
 
 def set_log(log):
@@ -70,8 +77,8 @@ def write(*args, **kwargs):
             val = putColors(val)
         Print(kw,":",val , end="",file=out)
     Print("",file=out)
-	
-	
+    
+    
 def log(*args, **kwargs):
     if LOG:
         out=sys.stdout
