@@ -22,6 +22,9 @@ Contrato:
     
 '''
 
+def printModule(module):
+    io.write("    * Mod({0})".format(module.__name__))
+
 class PluginManager(object):
 
     __plugins = {}
@@ -91,16 +94,18 @@ class PluginManager(object):
         io.write("load modules")
         dir_plugins_mods = []
         for plugin in dir_plugins:
-            mod = __import__(plugin)
-            dir_plugins_mods.append(mod)
-            
-        #io.write(dir(mod))
+            try:
+                mod = __import__(plugin)
+                dir_plugins_mods.append(mod)                
+            except Exception as ex:
+                io.error("    %% error loading {0}".format(ex))
+        for item_plugin in dir_plugins_mods:
+            printModule(item_plugin)
         #fpri = lambda md: md.contrato['prioridad']
         def fpri(mod):
             if hasattr(mod, "contrato"):
                 return mod.contrato['prioridad']
             else:
-                print("=======>",mod)
                 return 100
         dir_plugins_mods = sorted(dir_plugins_mods, key=fpri)
             
@@ -110,8 +115,9 @@ class PluginManager(object):
                 core.importadores[ mod.contrato['nombre'] ] = mod
             else:
                 io.log(mod.contrato['nombre'],'no cumple el contrato, <ro>falta {0}</ro>'.format(ctc))
-            inst = self.instancia(mod)
+            inst = None
             try:
+                inst = self.instancia(mod)
                 inst.al_finalizar_carga = mod.contrato["al_finalizar_carga"]
                 inst.orden = mod.contrato["prioridad"]
                 instancias.append( inst )
@@ -137,7 +143,7 @@ class PluginManager(object):
             except:
                 inst = self.__core.importadores[modulo].init(self.__core)
             return inst
-        else:
+        elif modulo.contrato['inicio']!=None:
             return modulo.contrato['inicio'](self.__core)
                 
     def cumple_terminos_contractuales(self,init):
@@ -157,10 +163,3 @@ class PluginManager(object):
                 return False, dependencia
         return True, True
             
-        
-
-
-
-
-
-

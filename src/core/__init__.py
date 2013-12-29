@@ -32,6 +32,7 @@ class Core(object):
     def __init__(self, *args, **kwargs):
         config_file = kwargs.get("config_file", paths.store_from_base( "config.cfg" ) )
         self.config_manager = config_manager.ConfigFile(config_file)
+        print(self.config_manager['PLUGINS'])
         self.plugin_manager = plugins.PluginManager(self,paths.get_path(self.config_manager['PLUGINS']["path"]))
 
 

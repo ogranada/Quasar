@@ -77,7 +77,8 @@ class TabManager(QtGui.QWidget):
         tab.setObjectName("tab"+str(len(self.tabs)))
         gridLayout = QtGui.QGridLayout(tab)
         #textEdit = QtGui.QTextEdit(tab)
-        textEdit = self.core.instancia("editor")
+        # textEdit = self.core.instancia("editor")
+        textEdit = self.core.instancia("simpleEditor")
         gridLayout.addWidget(textEdit, 0, 0, 1, 1)
         tab.editor = textEdit
         self.tabs.append(tab)

@@ -22,4 +22,3 @@ contrato = {
         "al_finalizar_carga":b,
         "prioridad":-1
 }
-        

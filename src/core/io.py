@@ -70,12 +70,12 @@ def write(*args, **kwargs):
     for arg in args:
         for color in colores:
             arg = putColors(str(arg))
-        Print(arg , end="",file=out)
+        Print(arg , end=" ",file=out)
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = putColors(val)
-        Print(kw,":",val , end="",file=out)
+        Print(kw,":",val , end=" ",file=out)
     Print("",file=out)
     
     
@@ -85,18 +85,19 @@ def log(*args, **kwargs):
         for arg in args:
             for color in colores:
                 arg = putColors(str(arg))
-            Print(arg , end="",file=out)
+            Print(arg , end=" ",file=out)
         for kw in kwargs.keys():
             val = kwargs[kw]
             for color in colores:
                 val = putColors(val)
-            Print(kw,":",val , end="",file=out)
+            Print(kw,":",val , end=" ",file=out)
         Print("",file=out)
 
 
 def error(*args, **kwargs):
     out=sys.stderr
-    Print(colores["<ro>"],file=out)
+    col = putColors("<ro>")
+    Print(col,file=out)
     #### Print stacktrace ####
     if(kwargs.get("traceback",False)):
         stack = traceback.format_stack()
@@ -106,13 +107,14 @@ def error(*args, **kwargs):
     for arg in args:
         for color in colores:
             arg = putColors(str(arg))
-        Print(arg, end="",file=out)
+        Print(arg, end=" ",file=out)
     for kw in kwargs.keys():
         val = kwargs[kw]
         for color in colores:
             val = putColors(val)
-        Print(kw,":",val, end="",file=out)
-    Print(colores["</ro>"],file=out)
+        Print(kw,":",val, end=" ",file=out)        
+    col = putColors("</ro>")
+    Print(col,file=out)
     Print("",file=out)
     
 e = error
@@ -120,7 +122,8 @@ e = error
 
 def warning(*args, **kwargs):
     out=sys.stderr
-    Print(colores["<am>"],file=out)
+    col = putColors("<am>")
+    Print(col,file=out)
     #### Print stacktrace ####
     if(kwargs.get("traceback",False)):
         stack = traceback.format_stack()
@@ -136,7 +139,8 @@ def warning(*args, **kwargs):
         for color in colores:
             val = val.replace(color,colores[color])
         Print(kw,":",val, end="",file=out)
-    Print(colores["</am>"],file=out)
+    col = putColors("</am>")
+    Print(col,file=out)
     Print("",file=out)
 
 w = warning
